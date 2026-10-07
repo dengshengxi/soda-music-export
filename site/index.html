@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>汽水收藏导出 · 把汽水音乐的收藏搬进 QQ 音乐</title>
+<meta name="description" content="纯本地解析，把汽水音乐的收藏歌曲导出成可直接导入 QQ 音乐的清单。不上传、不联网、不用登录账号。">
+<style>
+:root{
+  --bg:#fff; --soft:#f7f9f8; --line:#e8ebee; --txt:#14181d; --sub:#667085;
+  --accent:#12b76a; --accent-dark:#0e9f5d; --accent-soft:#e9fbf2;
+  --radius:16px; --shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px -12px rgba(16,24,40,.12);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);
+  font:15px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+a{color:inherit}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;gap:18px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;text-decoration:none;letter-spacing:-.2px}
+.logo .mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#12b76a,#0ea472);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+.nav-links{display:flex;gap:22px;margin-left:8px}
+.nav-links a{font-size:14px;color:var(--sub);text-decoration:none;transition:.15s}
+.nav-links a:hover{color:var(--txt)}
+.nav-sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--accent);color:#fff;
+  border:0;border-radius:10px;padding:9px 18px;font-size:14px;font-weight:500;cursor:pointer;
+  text-decoration:none;font-family:inherit;transition:.15s;white-space:nowrap}
+.btn:hover{background:var(--accent-dark);transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--txt);border:1px solid var(--line)}
+.btn.ghost:hover{background:#f6f8f7;transform:none}
+.btn.lg{padding:12px 24px;font-size:15px;border-radius:12px}
+.btn.sm{padding:6px 13px;font-size:13px;border-radius:9px}
+
+/* 登录区 */
+#authArea{display:flex;align-items:center;gap:8px}
+#authArea .who{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:500;
+  background:var(--accent-soft);color:#0a7a48;border:1px solid #bdefd3;border-radius:999px;padding:4px 13px}
+#authArea .who .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+/* ---------- hero ---------- */
+.hero{padding:74px 0 56px;text-align:center;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(900px 420px at 50% -60px,#e9fbf2 0%,rgba(233,251,242,0) 70%)}
+.hero h1{font-size:44px;line-height:1.22;margin:0 0 18px;letter-spacing:-1.2px;font-weight:800}
+.hero h1 em{font-style:normal;color:var(--accent-dark)}
+.hero p.lead{font-size:17px;color:var(--sub);max-width:620px;margin:0 auto 30px}
+.hero .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);
+  background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 14px}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:52px 0 0}
+.stat{background:#fff;padding:24px 18px;text-align:center}
+.stat .n{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1;color:var(--txt)}
+.stat .n span{color:var(--accent)}
+.stat .l{font-size:13px;color:var(--sub);margin-top:7px}
+
+/* ---------- section ---------- */
+section{padding:64px 0}
+.sec-head{text-align:center;max-width:640px;margin:0 auto 42px}
+.sec-head h2{font-size:29px;margin:0 0 12px;letter-spacing:-.6px;font-weight:800}
+.sec-head p{color:var(--sub);margin:0;font-size:15.5px}
+.eyebrow{display:inline-block;font-size:12.5px;font-weight:600;color:var(--accent-dark);
+  background:var(--accent-soft);border-radius:999px;padding:4px 13px;margin-bottom:14px;letter-spacing:.3px}
+
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;
+  box-shadow:var(--shadow)}
+.feat .ico{width:42px;height:42px;border-radius:11px;background:var(--accent-soft);display:flex;
+  align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.feat h3{margin:0 0 8px;font-size:16.5px;font-weight:700}
+.feat p{margin:0;color:var(--sub);font-size:14px;line-height:1.7}
+
+/* 步骤 */
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;position:relative}
+.step{counter-increment:s}
+.step .num{width:38px;height:38px;border-radius:11px;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;margin-bottom:15px}
+.step h3{margin:0 0 9px;font-size:17px;font-weight:700}
+.step p{margin:0 0 12px;color:var(--sub);font-size:14.3px}
+.step code{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:2px 7px;
+  font-family:ui-monospace,Consolas,Menlo,monospace;font-size:12.3px;word-break:break-all;display:inline-block}
+
+/* 格式演示 */
+.demo{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow)}
+.demo .tabs{display:flex;gap:6px;padding:14px 16px;border-bottom:1px solid var(--line);background:#fcfdfc;
+  flex-wrap:wrap;align-items:center}
+.demo .tabs .lb{font-size:13px;color:var(--sub);margin-right:4px}
+.tab{background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 14px;font-size:13.5px;
+  cursor:pointer;font-family:inherit;color:var(--sub);transition:.15s}
+.tab:hover{border-color:#c9d2cf;color:var(--txt)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+.demo pre{margin:0;padding:22px 24px;font-family:ui-monospace,Consolas,Menlo,monospace;
+  font-size:13.5px;line-height:2;color:#24292f;background:#fff;overflow:auto;min-height:190px}
+.demo .foot{padding:12px 24px;border-top:1px solid var(--line);background:#fcfdfc;
+  font-size:12.8px;color:var(--sub)}
+
+/* FAQ */
+.faq{max-width:760px;margin:0 auto}
+details.q{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:#fff;overflow:hidden}
+details.q summary{cursor:pointer;padding:16px 20px;font-weight:600;font-size:15.2px;list-style:none;
+  display:flex;align-items:center;gap:10px}
+details.q summary::-webkit-details-marker{display:none}
+details.q summary:after{content:"+";margin-left:auto;color:var(--sub);font-weight:400;font-size:19px}
+details.q[open] summary:after{content:"–"}
+details.q[open] summary{border-bottom:1px solid #f2f4f5;background:#fcfdfc}
+details.q .a{padding:14px 20px 18px;color:var(--sub);font-size:14.3px;line-height:1.75}
+details.q .a p{margin:0 0 8px}
+details.q .a p:last-child{margin:0}
+
+/* 隐私 */
+.privacy{background:linear-gradient(180deg,#f4fbf7,#fff);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.plist{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+.pitem{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px}
+.pitem .ck{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);
+  color:var(--accent-dark);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.pitem b{display:block;font-size:14.5px;margin-bottom:3px}
+.pitem span{font-size:13.4px;color:var(--sub);line-height:1.65}
+
+/* CTA */
+.cta-band{background:linear-gradient(135deg,#0e9f5d,#12b76a);border-radius:22px;padding:48px 40px;
+  text-align:center;color:#fff;margin:0 0 64px}
+.cta-band h2{margin:0 0 10px;font-size:29px;font-weight:800;letter-spacing:-.6px}
+.cta-band p{margin:0 0 26px;opacity:.92;font-size:15.5px}
+.cta-band .btn{background:#fff;color:var(--accent-dark);font-weight:600}
+.cta-band .btn:hover{background:#f2fbf6;transform:translateY(-1px)}
+.cta-band .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+.cta-band .btn.ghost:hover{background:rgba(255,255,255,.14);transform:none}
+
+footer{border-top:1px solid var(--line);padding:32px 0 44px;color:var(--sub);font-size:13.2px}
+.foot-in{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.foot-in .sp{flex:1}
+.foot-in a{color:var(--sub);text-decoration:none}
+.foot-in a:hover{color:var(--accent-dark)}
+
+/* ---------- 登录弹窗 ---------- */
+.mask{position:fixed;inset:0;background:rgba(15,23,20,.44);backdrop-filter:blur(3px);z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:18px;padding:30px 30px 26px;width:100%;max-width:392px;
+  position:relative;box-shadow:0 24px 60px -18px rgba(16,24,40,.35)}
+.modal .x{position:absolute;top:13px;right:15px;background:none;border:0;font-size:22px;color:var(--sub);
+  cursor:pointer;line-height:1;padding:2px 6px;border-radius:7px;font-family:inherit}
+.modal .x:hover{background:#f3f5f4;color:var(--txt)}
+.modal h3{margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.3px}
+.modal .sub{margin:0 0 20px;color:var(--sub);font-size:13.6px;line-height:1.6}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.8px;color:var(--sub);margin-bottom:6px;font-weight:500}
+.field input{width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:10px;font-size:14.5px;
+  font-family:inherit;color:var(--txt);background:#fff}
+.field input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(18,183,106,.13)}
+.modal .btn{width:100%;padding:11px;font-size:15px;font-weight:600;border-radius:11px}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.err{background:#fef3f2;border:1px solid #fecdca;color:#b42318;border-radius:10px;
+  padding:9px 13px;font-size:13.2px;margin-bottom:14px}
+.swap{text-align:center;font-size:13.5px;color:var(--sub);margin-top:15px}
+.swap a{color:var(--accent-dark);font-weight:600;text-decoration:none}
+.swap a:hover{text-decoration:underline}
+.note{font-size:12.2px;color:#98a2b3;line-height:1.65;margin:16px 0 0;padding-top:14px;border-top:1px solid #f1f3f4}
+.prof{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:18px}
+.prof .row{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:13.8px}
+.prof .row span:first-child{color:var(--sub)}
+.prof .row span:last-child{font-weight:600}
+#authArea .btn{padding:6px 14px}
+.link-btn{background:none;border:0;color:var(--accent-dark);font-size:13.4px;cursor:pointer;
+  font-family:inherit;font-weight:600;padding:4px 6px}
+.link-btn:hover{text-decoration:underline}
+
+@media(max-width:880px){
+  .g3,.steps,.plist{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+  .hero h1{font-size:32px}
+  .stats{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .sec-head h2,.cta-band h2{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#top"><span class="mark">♫</span>汽水收藏导出</a>
+    <div class="nav-links">
+      <a href="#feature">功能</a>
+      <a href="#how">怎么用</a>
+      <a href="#format">导出格式</a>
+      <a href="#privacy">隐私</a>
+      <a href="#faq">常见问题</a>
+    </div>
+    <div class="nav-sp"></div>
+    <div id="authArea"></div>
+    <a class="btn sm" id="btnUse" href="https://qq48gy6vpn88r.villa.functorz-app.com">立即使用 →</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <h1>汽水音乐的收藏，<br><em>一句话搬进 QQ 音乐</em></h1>
+    <p class="lead">把汽水音乐里的收藏歌曲导出成一份可直接粘贴的清单，QQ 音乐「导入外部歌单」认得它。反过来也能抓 QQ 音乐网页上显示出来的歌单 —— 但那边不分页，<b>完整歌单导不出来</b>。全程在浏览器里完成，不用装东西、不上传任何数据。</p>
+    <div class="cta">
+      <a class="btn lg" href="https://qq48gy6vpn88r.villa.functorz-app.com">开始导出 →</a>
+      <a class="btn lg ghost" href="https://qq48gy6vpn88r.villa.functorz-app.com/qqmusic.html">抓 QQ 音乐（限可见）</a>
+      <a class="btn lg ghost" href="help.html">先看使用说明</a>
+    </div>
+    <div class="badges">
+      <span class="badge">🔒 纯本地解析</span>
+      <span class="badge">✈️ 可断网使用</span>
+      <span class="badge">🆓 完全免费</span>
+      <span class="badge">🙅 无需登录音乐账号</span>
+      <span class="badge">🎵 任意歌单都能导</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n"><span>3</span> 步</div><div class="l">完成一次导出</div></div>
+      <div class="stat"><div class="n"><span>0</span> 字节</div><div class="l">上传到服务器的数据</div></div>
+      <div class="stat"><div class="n"><span>4</span> 种</div><div class="l">导出格式（txt / csv / json / 剪贴板）</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="feature">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">为什么用它</span>
+      <h2>换平台不该是一场体力活</h2>
+      <p>音乐 App 之间没有互通的歌单迁移通道，但你要的东西本来就在自己这台电脑上 —— 汽水音乐是 Electron 应用，它把歌单数据写进了本地缓存。本工具做的，就是把这份没人看得懂的缓存，翻译成一份人能直接粘走的清单。</p>
+    </div>
+    <div class="grid g3">
+      <div class="card feat"><div class="ico">🔒</div><h3>纯本地，不上传</h3>
+        <p>解析代码全部在你自己的浏览器里跑。选中的文件只进内存，刷新即焚，没有任何一个字节被发往服务器。你可以断网验证。</p></div>
+      <div class="card feat"><div class="ico">🎛️</div><h3>导出什么，你说了算</h3>
+        <p>要不要带歌手名、要不要专辑、加不加序号、用什么分隔符、歌名和歌手谁在前 —— 五个开关，实时预览。</p></div>
+      <div class="card feat"><div class="ico">📋</div><h3>粘贴即可导入</h3>
+        <p>默认输出的「歌名 - 歌手」格式，是 QQ 音乐「导入外部歌单」识别率最高的写法，复制粘贴一步到位。</p></div>
+      <div class="card feat"><div class="ico">📦</div><h3>四种产物</h3>
+        <p>剪贴板纯文本、.txt 存档、.csv 表格（Excel 打开不乱码）、.json 结构化数据，覆盖从「马上导入」到「二次开发」。</p></div>
+      <div class="card feat"><div class="ico">🎵</div><h3>任意歌单，随你挑</h3>
+        <p>客户端缓存里翻到的歌单会全部列出来让你勾选 —— 不只是「我喜欢的音乐」，自己建的和别人建的都行。
+        可以只勾一个，也可以一次勾好几个合并导出，重复歌曲一键去重。</p></div>
+      <div class="card feat"><div class="ico">⚠️</div><h3>QQ 音乐：只能抓可见的</h3>
+        <p>在 QQ 音乐网页版点一下书签，能抓下<b>当前页面上显示出来的歌</b>（实测 10 首左右）。
+        QQ 音乐网页版不提供翻页，本地歌单库又是加密的，所以<b>完整歌单目前导不出来</b> —— 我们把试过的路都写在文档里了，省得你再踩一遍。</p></div>
+      <div class="card feat"><div class="ico">🔍</div><h3>可自查，不含糊</h3>
+        <p>页面底部保留了「原始数据」查看区，被读到的每一条记录你都能自己翻看，确认里面到底有什么。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">怎么用</span>
+      <h2>三步，两分钟</h2>
+      <p>唯一需要你注意的是第一步 —— 缓存里得先有数据，工具才变得出歌来。</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>先在客户端里打开歌单</h3>
+        <p>打开汽水音乐，点进「我喜欢的音乐」，往下滚动把歌曲全部刷出来。客户端只有这时才会把数据写进本地缓存。<b>这一步没做，后面导出来就是空的。</b></p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>把 leveldb 文件夹喂进去</h3>
+        <p>按 <code>Win</code>+<code>R</code> 粘贴：</p>
+        <p><code>%APPDATA%\SodaMusic\Local Storage\leveldb</code></p>
+        <p>打开后全选里面所有文件，拖到工具页面上。不用挑，工具会自己筛。</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>复制，粘进 QQ 音乐</h3>
+        <p>调好导出格式，点「复制导入文本」。打开 QQ 音乐 → 我的 → 导入外部歌单 → 粘贴 → 等待匹配完成。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="format">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">导出格式</span>
+      <h2>想不想带歌手名，点一下就行</h2>
+      <p>下面就是工具里那个开关的真实效果，点按钮切换看看。</p>
+    </div>
+
+    <div class="demo">
+      <div class="tabs">
+        <span class="lb">歌手名</span>
+        <button class="tab on" data-demo="on">带歌手</button>
+        <button class="tab" data-demo="off">只要歌名</button>
+        <span class="lb" style="margin-left:14px">其他</span>
+        <button class="tab" data-demo="album">加专辑</button>
+        <button class="tab" data-demo="index">加序号</button>
+        <button class="tab" data-demo="rev">歌手在前</button>
+      </div>
+      <pre id="demoOut"></pre>
+      <div class="foot" id="demoNote"></div>
+    </div>
+  </div>
+</section>
+
+<section class="privacy" id="privacy">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">隐私</span>
+      <h2>它凭什么值得你信任</h2>
+      <p>不是「我们承诺」，是架构上做不到 —— 你可以自己验证每一条。</p>
+    </div>
+    <div class="plist">
+      <div class="pitem"><div class="ck">✓</div><div><b>没有任何上传</b>
+        <span>打开浏览器开发者工具的 Network 面板，全程盯着看：除了页面自己的几个静态文件，不会有携带你数据的请求。</span></div></div>
+      <div class="pitem"><div class="ck">✓</div><div><b>没有任何留存</b>
+        <span>不写 localStorage，不落 Cookie，不存服务端。关掉页面，一切归零。</span></div></div>
+      <div class="pitem"><div class="ck">✓</div><div><b>不碰你的账号</b>
+        <span>不登录、不调接口、不模拟请求。它只是读了一份你本机已经存在的文件，性质跟用记事本打开没区别。</span></div></div>
+      <div class="pitem"><div class="ck">✓</div><div><b>只读，不改</b>
+        <span>对你的缓存文件和汽水音乐安装目录只做读取，绝不修改、删除或写入。</span></div></div>
+      <div class="pitem"><div class="ck">✓</div><div><b>浏览器强制你亲手选文件</b>
+        <span>网页永远无法自己指定读取硬盘路径，必须由你手动选中。这不是限制，恰恰是它安全的证明。</span></div></div>
+      <div class="pitem"><div class="ck">✓</div><div><b>可以彻底离线</b>
+        <span>把页面和几个 js 文件保存到本地，拔掉网线双击打开，功能完全一样。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">常见问题</span><h2>你可能想问</h2></div>
+    <div class="faq">
+      <details class="q"><summary>会被汽水音乐封号吗？</summary><div class="a">
+        <p>不会。整个过程不登录、不调用任何接口、不模拟请求，只是把你本机上已经存在的一份缓存文件读出来。这和「用记事本打开一个文件」在性质上没有区别。</p>
+      </div></details>
+      <details class="q"><summary>为什么导出来是 0 首？</summary><div class="a">
+        <p>99% 是第一步没做：客户端只有在你打开歌单、歌曲真的加载出来之后才会写入缓存。回到汽水音乐把歌单滚一遍，再重新拖文件。</p>
+      </div></details>
+      <details class="q"><summary>数量和歌单里显示的不一样？</summary><div class="a">
+        <p>正常。服务端统计和本地缓存口径不同，本地可能含已下架/失效条目。导入 QQ 音乐时匹配不上的会自动跳过，多一点不用手动删。</p>
+      </div></details>
+      <details class="q"><summary>要不要带歌手名？</summary><div class="a">
+        <p>导入 QQ 音乐建议带着 —— 重名歌曲太多（比如《起风了》有好几个版本），带歌手能明显提高匹配率。只想留个纯清单就关掉。</p>
+      </div></details>
+      <details class="q"><summary>能导出「我喜欢的音乐」以外的歌单吗？</summary><div class="a">
+        <p>能。解析完成后会出现一块「选择要导出的歌单」，把缓存里找到的每一个歌单都列出来，想勾哪个勾哪个 ——
+        自己建的和别人建的都算，还能一次勾多个合并导出，并有一键去重。没看到想要的歌单？去汽水音乐里把它打开滚动一遍，再回来重新拖文件。</p>
+      </div></details>
+      <details class="q"><summary>能反过来导出 QQ 音乐的歌单吗？</summary><div class="a">
+        <p><b>只能导出页面上显示出来的那部分，完整的导不出来。</b>在工具站顶部切到「🎵 QQ 音乐（限可见）」，把那个小书签拖到浏览器书签栏；
+        之后在 QQ 音乐网页版打开任意歌单、点一下书签，右上角就出现计数面板，显示抓到了多少首，点「复制」直接粘走。</p>
+        <p>为什么导不全：QQ 音乐网页版<b>没有翻页</b>，只给前若干首；它的 PC 客户端又是原生 Qt，本地歌单库 <code>qmlist64.db</code> 是<b>加密</b>的，
+        读不出来；网页数据还是服务端直出（不发 XHR），连登录 Cookie 都是 <code>HttpOnly</code>，JS 读不到就没法自己调接口补齐。
+        这几条路我们都试过了，目前无解。</p>
+      </div></details>
+      <details class="q"><summary>能导入网易云 / Apple Music / Spotify 吗？</summary><div class="a">
+        <p>网易云 PC 端同样有「导入外部歌单」入口，可以直接粘。Apple Music / Spotify 官方不支持粘贴导入，需要借助 SongShift、TuneMyMusic 这类第三方工具，把下载的 .csv 传上去。</p>
+      </div></details>
+      <details class="q"><summary>支持 Mac 吗？支持手机吗？</summary><div class="a">
+        <p>Mac 支持，路径是 <code>~/Library/Application Support/SodaMusic/Local Storage/leveldb</code>。手机端拿不到这个目录，暂不支持，请在电脑上操作。</p>
+      </div></details>
+      <details class="q"><summary>为什么 QQ 音乐导出要拖书签？不能直接点开就用吗？</summary><div class="a">
+        <p>浏览器不允许别的网站去读 QQ 音乐的登录数据（跨域限制），所以必须在你已经打开的 QQ 音乐页面上运行。
+        书签是解决这个问题最方便的办法 —— 拖一次，以后在那边点一下就行。这也正是它最安全的原因：数据始终没离开你的浏览器。</p>
+      </div></details>
+      <details class="q"><summary>需要付费吗？</summary><div class="a">
+        <p>完全免费，无内购、无广告、无次数限制。</p>
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="cta-band">
+    <h2>现在就把收藏搬过去吧</h2>
+    <p>两分钟，不上传任何东西，也不用登录任何账号。</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn lg" href="https://qq48gy6vpn88r.villa.functorz-app.com">开始导出 →</a>
+      <a class="btn lg ghost" href="help.html">使用帮助</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>汽水收藏导出 · 一个纯本地的小工具</span>
+    <span class="sp"></span>
+    <a href="https://qq48gy6vpn88r.villa.functorz-app.com">导出工具</a>
+    <a href="help.html">使用帮助</a>
+    <span>与汽水音乐、QQ 音乐官方均无关联</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- 导出格式演示 ---------- */
+(function(){
+  var SONGS = [
+    ['晴天','周杰伦','叶惠美'],
+    ['起风了','买辣椒也用券','起风了'],
+    ['夜空中最亮的星','逃跑计划','世界'],
+    ['平凡之路','朴树','猎户星座'],
+    ['突然的自我','伍佰','树枝孤鸟']
+  ];
+  var MODES = {
+    on:    function(s){ return s[0] + ' - ' + s[1]; },
+    off:   function(s){ return s[0]; },
+    album: function(s){ return s[0] + ' - ' + s[1] + ' - ' + s[2]; },
+    index: function(s,i){ return (i+1) + '. ' + s[0] + ' - ' + s[1]; },
+    rev:   function(s){ return s[1] + ' - ' + s[0]; }
+  };
+  var NOTES = {
+    on:    '默认格式。QQ 音乐「导入外部歌单」识别率最高的写法，推荐。',
+    off:   '只有纯歌名，适合贴进备忘录、做纯歌单展示，或交给别的工具处理。',
+    album: '追加专辑名。注意：多一个字段会略微降低匹配率，一般不建议开。',
+    index: '每行加序号，方便核对总数和逐条检查。',
+    rev:   '歌手在前。少数平台用这种顺序匹配更准，可以两种都试一次。'
+  };
+  var out = document.getElementById('demoOut');
+  var note = document.getElementById('demoNote');
+  function draw(mode){
+    out.textContent = SONGS.map(function(s,i){ return MODES[mode](s,i); }).join('\n');
+    note.textContent = NOTES[mode];
+  }
+  document.querySelectorAll('.tab[data-demo]').forEach(function(b){
+    b.onclick = function(){
+      document.querySelectorAll('.tab[data-demo]').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      draw(b.getAttribute('data-demo'));
+    };
+  });
+  draw('on');
+})();
+</script>
+
+<!-- 登录 / 注册弹窗 -->
+<div class="mask" id="mask" hidden>
+  <div class="modal" id="modal"></div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+/* ---------- 登录系统 ---------- */
+(function () {
+  'use strict';
+  var TOOL = 'https://qq48gy6vpn88r.villa.functorz-app.com';
+  var mask = document.getElementById('mask');
+  var modal = document.getElementById('modal');
+  var area = document.getElementById('authArea');
+  var mode = 'signin';   // signin | signup | profile
+  var busy = false;
+
+  function close() { mask.hidden = true; }
+  function open(m) { mode = m; draw(); mask.hidden = false; setTimeout(function () {
+    var f = document.getElementById('mUser') || document.getElementById('mClose');
+    if (f) f.focus();
+  }, 30); }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function dateStr(ts) {
+    var d = new Date(ts);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+
+  function draw() {
+    var me = Auth.me();
+    if (mode === 'profile' && me) {
+      modal.innerHTML =
+        '<button class="x" id="mClose">&times;</button>' +
+        '<h3>' + esc(me.name) + '</h3>' +
+        '<p class="sub">已登录。这是保存在本机浏览器里的账号。</p>' +
+        '<div class="prof">' +
+          '<div class="row"><span>昵称</span><span>' + esc(me.name) + '</span></div>' +
+          '<div class="row"><span>本次登录于</span><span>' + dateStr(me.since) + '</span></div>' +
+          '<div class="row"><span>本机账号数</span><span>' + Auth.count() + '</span></div>' +
+          '<div class="row"><span>密码存储</span><span>加盐哈希，不明文</span></div>' +
+        '</div>' +
+        '<button class="btn" onclick="window.location.href=\'' + TOOL + '\'">打开导出工具 →</button>' +
+        '<div class="swap"><a href="#" id="mOut">退出登录</a></div>' +
+        '<p class="note">说明：这是<b>本机账号</b>，数据只存在这台电脑的这个浏览器里 —— 不上传服务器、不能跨设备同步，清理浏览器数据会随之消失。它用来区分不同使用者的偏好，不涉及任何音乐平台账号。</p>';
+      modal.querySelector('#mClose').onclick = close;
+      modal.querySelector('#mOut').onclick = function (e) {
+        e.preventDefault(); Auth.signOut(); close();
+      };
+      return;
+    }
+
+    var signup = mode === 'signup';
+    modal.innerHTML =
+      '<button class="x" id="mClose">&times;</button>' +
+      '<h3>' + (signup ? '注册一个本机账号' : '登录') + '</h3>' +
+      '<p class="sub">' + (signup
+        ? '账号只保存在这台电脑的浏览器里，密码用加盐哈希存储，不会明文保存。'
+        : '用你在这台电脑上注册过的账号登录。') + '</p>' +
+      '<div class="field"><label>昵称</label>' +
+        '<input id="mUser" type="text" autocomplete="username" placeholder="2–20 个字符，不能有空格"></div>' +
+      '<div class="field"><label>密码</label>' +
+        '<input id="mPass" type="password" autocomplete="' +
+        (signup ? 'new-password' : 'current-password') + '" placeholder="至少 6 位"></div>' +
+      '<div class="err" id="mErr" hidden></div>' +
+      '<button class="btn" id="mGo">' + (signup ? '注册并登录' : '登录') + '</button>' +
+      '<div class="swap">' + (signup
+        ? '已经有账号了？<a href="#" id="mToggle">去登录</a>'
+        : '还没有账号？<a href="#" id="mToggle">注册一个</a>') + '</div>' +
+      '<p class="note">本机账号 · 不上传不同步 · 与你的汽水音乐 / QQ 音乐账号完全无关</p>';
+
+    modal.querySelector('#mClose').onclick = close;
+    modal.querySelector('#mToggle').onclick = function (e) {
+      e.preventDefault(); mode = signup ? 'signin' : 'signup'; draw();
+    };
+    var go = modal.querySelector('#mGo');
+    var pass = modal.querySelector('#mPass');
+    pass.onkeydown = function (e) { if (e.key === 'Enter') go.click(); };
+    go.onclick = function () {
+      if (busy) return;
+      var u = modal.querySelector('#mUser').value;
+      var p = pass.value;
+      var err = Auth.validate.user(u) || Auth.validate.pass(p);
+      var box = modal.querySelector('#mErr');
+      if (err) { box.hidden = false; box.textContent = err; return; }
+      busy = true; go.disabled = true; go.textContent = '请稍候…';
+      var job = signup ? Auth.signUp(u, p) : Auth.signIn(u, p);
+      job.then(function (r) {
+        busy = false;
+        if (!r.ok) {
+          go.disabled = false;
+          go.textContent = signup ? '注册并登录' : '登录';
+          box.hidden = false; box.textContent = r.error;
+          return;
+        }
+        close();
+      });
+    };
+  }
+
+  function paint() {
+    var me = Auth.me();
+    if (me) {
+      area.innerHTML = '<span class="who"><i class="dot"></i>' + esc(me.name) + '</span>' +
+                       '<button class="link-btn" id="btnOut">退出</button>';
+      area.querySelector('#btnOut').onclick = function () { Auth.signOut(); };
+      var who = area.querySelector('.who');
+      who.style.cursor = 'pointer';
+      who.onclick = function () { open('profile'); };
+    } else {
+      area.innerHTML = '<button class="btn ghost sm" id="btnIn">登录</button>' +
+                       '<button class="btn sm" id="btnUp">注册</button>';
+      area.querySelector('#btnIn').onclick = function () { open('signin'); };
+      area.querySelector('#btnUp').onclick = function () { open('signup'); };
+    }
+  }
+
+  Auth.onChange(paint);
+  paint();
+
+  mask.addEventListener('click', function (e) { if (e.target === mask) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>

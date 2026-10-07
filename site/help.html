@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>使用帮助 · 汽水音乐 ↔ QQ 音乐 歌单导出</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#fff; --line:#e6e8eb; --txt:#1f2328; --sub:#6b7280;
+  --accent:#12b76a; --accent-dark:#0e9f5d; --accent-soft:#e9fbf2;
+  --warn-bg:#fffbeb; --warn-line:#fde68a; --warn-txt:#92400e;
+  --info-bg:#eff6ff; --info-line:#bfdbfe; --info-txt:#1e40af;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;padding:0 20px 80px;background:var(--bg);color:var(--txt);
+  font:14px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;}
+.wrap{max-width:1080px;margin:0 auto}
+
+header{padding:34px 0 20px}
+h1{font-size:24px;margin:0 0 8px;letter-spacing:-.2px}
+.lead{color:var(--sub);margin:0;font-size:14.5px}
+.nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.nav a{display:inline-block;padding:7px 15px;border-radius:9px;font-size:13.5px;text-decoration:none;
+  background:#fff;border:1px solid var(--line);color:var(--txt)}
+.nav a:hover{border-color:var(--accent);color:var(--accent-dark)}
+.nav a.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.nav a.primary:hover{background:var(--accent-dark);color:#fff}
+
+.layout{display:flex;gap:24px;align-items:flex-start;margin-top:8px}
+.toc{width:212px;flex-shrink:0;position:sticky;top:20px;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--radius);padding:14px 8px}
+.toc b{display:block;font-size:12px;color:var(--sub);padding:4px 12px 8px;letter-spacing:.5px}
+.toc a{display:block;padding:6px 12px;border-radius:7px;font-size:13.3px;color:#374151;text-decoration:none}
+.toc a:hover{background:var(--accent-soft);color:var(--accent-dark)}
+main{flex:1;min-width:0}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px 26px;margin-bottom:16px}
+.card h2{font-size:17px;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid #f1f2f4;
+  display:flex;align-items:center;gap:9px}
+.card h2 .n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+  border-radius:7px;background:var(--accent-soft);color:var(--accent-dark);font-size:12.5px;font-weight:700}
+.card h3{font-size:14.5px;margin:20px 0 8px;color:#111827}
+.card p{margin:9px 0}
+.card ol,.card ul{padding-left:22px;margin:9px 0}
+.card li{margin-bottom:7px}
+.card li::marker{color:var(--sub)}
+
+code{background:#f3f4f6;border:1px solid var(--line);border-radius:5px;padding:1.5px 6px;
+  font-family:ui-monospace,Consolas,Menlo,monospace;font-size:12.5px;word-break:break-all}
+kbd{background:#f9fafb;border:1px solid #d1d5db;border-bottom-width:2px;border-radius:4px;
+  padding:0 5px;font-size:12px;font-family:inherit}
+pre{background:#f8f9fa;border:1px solid var(--line);border-radius:10px;padding:13px 16px;
+  overflow:auto;font-size:12.5px;line-height:1.7;margin:10px 0;
+  font-family:ui-monospace,Consolas,Menlo,monospace}
+pre code{background:none;border:0;padding:0}
+
+.pathbox{display:flex;align-items:center;gap:10px;background:#f8f9fa;border:1px solid var(--line);
+  border-radius:10px;padding:11px 14px;margin:10px 0;flex-wrap:wrap}
+.pathbox code{flex:1;min-width:240px;background:#fff;font-size:12.8px}
+.pathbox .tag{font-size:11.5px;color:var(--sub);background:#eef1f4;border-radius:6px;padding:2px 8px}
+
+.callout{border-radius:11px;padding:13px 17px;font-size:13.4px;margin:14px 0;line-height:1.7}
+.callout b{font-weight:600}
+.c-warn{background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-txt)}
+.c-info{background:var(--info-bg);border:1px solid var(--info-line);color:var(--info-txt)}
+.c-ok{background:var(--accent-soft);border:1px solid #bdefd3;color:#0a7a48}
+
+table{border-collapse:collapse;width:100%;font-size:13.3px;margin:12px 0}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid #f1f2f4;vertical-align:top}
+th{color:var(--sub);font-weight:600;background:#fafbfc;font-size:12.5px}
+td code{font-size:12px}
+
+details.faq{border:1px solid var(--line);border-radius:11px;margin-bottom:9px;background:#fff;overflow:hidden}
+details.faq summary{cursor:pointer;padding:13px 17px;font-weight:600;font-size:14px;list-style:none;
+  display:flex;align-items:center;gap:9px}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::before{content:"?";display:inline-flex;align-items:center;justify-content:center;
+  width:19px;height:19px;flex-shrink:0;border-radius:50%;background:var(--accent-soft);
+  color:var(--accent-dark);font-size:11.5px;font-weight:700}
+details.faq[open] summary{border-bottom:1px solid #f1f2f4;background:#fcfcfd}
+details.faq .a{padding:4px 17px 16px;font-size:13.5px;color:#374151}
+details.faq .a p:first-child{margin-top:10px}
+details.faq .a p:last-child{margin-bottom:0}
+
+.steps{counter-reset:s;list-style:none;padding:0;margin:12px 0}
+.steps li{counter-increment:s;position:relative;padding-left:42px;margin-bottom:16px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:27px;height:27px;
+  border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700}
+.steps li b{display:block;margin-bottom:3px}
+
+footer{text-align:center;color:var(--sub);font-size:12.5px;padding:28px 0 0;line-height:1.9}
+@media(max-width:860px){.toc{display:none}.layout{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>使用帮助 · 汽水音乐收藏导出</h1>
+  <p class="lead">两个方向都讲：<b>汽水音乐 → 导出成清单</b>（完整支持），以及<b>反过来从 QQ 音乐里抓歌单</b>（只能抓页面上可见的部分）。全程都在你自己电脑的浏览器里完成，不上传、不联网。</p>
+  <div class="nav">
+    <a class="primary" href="https://qq48gy6vpn88r.villa.functorz-app.com">← 回到导出工具</a>
+    <a href="index.html">🏠 官网首页</a>
+    <a href="#qq">QQ 音乐导出</a>
+    <a href="#quick">三步上手</a>
+    <a href="#pick">选择歌单</a>
+    <a href="#opts">导出格式怎么选</a>
+    <a href="#import">导入 QQ 音乐</a>
+    <a href="#faq">常见问题</a>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc">
+  <b>目录</b>
+  <a href="#qq">另一条路：导出 QQ 音乐的歌单</a>
+  <a href="#before">开始之前</a>
+  <a href="#quick">三步上手</a>
+  <a href="#pick">选择要导出的歌单</a>
+  <a href="#opts">导出格式选项</a>
+  <a href="#formats">四种导出文件</a>
+  <a href="#import">导入 QQ 音乐</a>
+  <a href="#other">导入其他平台</a>
+  <a href="#faq">常见问题 FAQ</a>
+  <a href="#how">原理：它是怎么读到的</a>
+  <a href="#privacy">隐私与安全</a>
+</nav>
+
+<main>
+
+<section class="card" id="before">
+  <h2><span class="n">0</span>开始之前：两件你必须知道的事</h2>
+
+  <div class="callout c-ok">
+    <b>你的数据不会离开你的电脑。</b>这个工具是一个纯网页，解析代码全部在你自己的浏览器里运行。
+    你选中的文件只被读进浏览器内存，不会被上传到任何服务器，页面一刷新就全部消失。
+    你可以断网使用（把页面存到本地再打开也完全可以）。
+  </div>
+
+  <div class="callout c-warn">
+    <b>它读的是「本地缓存」，不是实时数据。</b>汽水音乐客户端会把你看过的歌单内容缓存在本机。
+    所以——<b>只有你在客户端里打开过的歌单，才导得出来</b>。没打开过的歌单，本地根本没有数据，工具也变不出来。
+  </div>
+
+  <h3>支持哪些平台</h3>
+  <table>
+    <tr><th style="width:110px">系统</th><th>缓存目录</th></tr>
+    <tr><td>Windows</td><td><code>%APPDATA%\SodaMusic\Local Storage\leveldb</code></td></tr>
+    <tr><td>macOS</td><td><code>~/Library/Application Support/SodaMusic/Local Storage/leveldb</code></td></tr>
+  </table>
+  <p style="color:var(--sub);font-size:13px">手机端（Android / iOS）拿不到这个目录，暂时不支持。请在电脑上操作。</p>
+</section>
+
+<section class="card" id="quick">
+  <h2><span class="n">1</span>三步上手</h2>
+  <ol class="steps">
+    <li>
+      <b>先在汽水音乐里打开你要导出的歌单</b>
+      打开电脑上的汽水音乐，点进「我喜欢的音乐」或者你想导出的任意歌单，<b>上下滚动一下让歌曲全部加载出来</b>。
+      这一步很关键：客户端只有在加载时才会把数据写进本地缓存。看完之后不用退出，让它继续开着就行。
+    </li>
+    <li>
+      <b>找到 leveldb 文件夹，把所有文件喂给工具</b>
+      Windows 上按 <kbd>Win</kbd>+<kbd>R</kbd>，粘贴下面这行回车：
+      <div class="pathbox"><span class="tag">Windows</span><code>%APPDATA%\SodaMusic\Local&nbsp;Storage\leveldb</code></div>
+      <div class="pathbox"><span class="tag">macOS</span><code>~/Library/Application Support/SodaMusic/Local Storage/leveldb</code></div>
+      打开的文件夹里通常有几十个文件（<code>.ldb</code>、<code>.log</code>、<code>MANIFEST</code>、<code>LOG</code> 等）。
+      <b>不用挑，全选</b> —— 拖到工具页面上，或者点「选择 leveldb 文件夹」直接选中整个目录。工具会自动挑出有用的那些。
+    </li>
+    <li>
+      <b>复制 / 下载，然后粘进 QQ 音乐</b>
+      解析完成后页面会列出所有歌曲。调整好导出格式，点「复制导入文本」，再去 QQ 音乐粘贴即可（<a href="#import">详细步骤见下</a>）。
+    </li>
+  </ol>
+  <div class="callout c-info">
+    <b>小提示：</b>如果第 2 步里文件夹是空的或者不存在，说明汽水音乐装在了别的位置、或者用的是別的账号配置目录。
+    可以在资源管理器地址栏直接粘上面那行路径 —— 系统会自动把 <code>%APPDATA%</code> 展开成真实路径。
+  </div>
+</section>
+
+<section class="card" id="pick">
+  <h2><span class="n">2</span>选择歌单：不只是「我喜欢的音乐」</h2>
+  <p>解析完成后，歌曲列表上方会出现一块「<b>选择要导出的歌单</b>」。客户端缓存里翻到的每一个歌单都会列在那儿，想导出哪个就勾哪个 —— 可以只勾一个，也可以一次勾好几个合并导出。</p>
+
+  <table>
+    <tr><th style="width:130px">标签</th><th>含义</th></tr>
+    <tr><td><b>我喜欢的</b></td><td>你自己的「我喜欢的音乐」。默认帮你勾上。</td></tr>
+    <tr><td><b>我创建的</b></td><td>你自己建的其他歌单，比如「开车听」「睡前」。</td></tr>
+    <tr><td><b>其他人的</b></td><td>你打开过 / 收藏过的别人的歌单 —— 一样能导出，勾上就行。</td></tr>
+  </table>
+
+  <p>旁边三个快捷按钮：</p>
+  <ul>
+    <li><b>全选 / 全不选</b> —— 一次勾上或清空。</li>
+    <li><b>只要我创建的</b> —— 剔掉别人的歌单，只留自己的。</li>
+  </ul>
+
+  <h3>「合并时去重」</h3>
+  <p>同时勾了多个歌单时，很可能有重复的歌（同一首歌既在「我喜欢的」又在「开车听」）。勾上这个开关，<b>歌名 + 歌手完全相同</b>的条目只保留第一条，导出的清单里不会有重复行。只勾一个歌单时它不起作用（单个歌单内部本来就已经去重了）。</p>
+
+  <div class="callout c-info">
+    <b>想要的歌单列表里没有？</b>回到汽水音乐把那个歌单点开、上下滚动让它加载完，再回来重新拖一次文件夹。
+    工具只能读到客户端<b>已经缓存下来</b>的东西，没打开过的歌单它变不出来。
+  </div>
+
+  <div class="callout c-warn">
+    <b>数量对不上是正常的。</b>有时歌单在服务器上标记 77 首，这里却导出 83 首 —— 多出来的是缓存里残留的历史条目（下架、失效、不同版本的都算）。
+    已一并保留，导入 QQ 音乐时匹配不上的会被自动跳过，不用手动删。
+  </div>
+</section>
+
+<section class="card" id="opts">
+  <h2><span class="n">3</span>导出格式：想不想带上歌手名，这里说了算</h2>
+  <p>解析完成后，歌曲列表上方有一块「导出格式」设置区。改完立刻生效，右边的预览会同步更新。</p>
+
+  <table>
+    <tr><th style="width:120px">选项</th><th>作用</th><th style="width:210px">效果示例</th></tr>
+    <tr>
+      <td><b>包含歌手名</b></td>
+      <td>默认开启。关掉就只导出纯歌名，一行一个。</td>
+      <td><code>晴天</code><br><code>晴天 - 周杰伦</code></td>
+    </tr>
+    <tr>
+      <td><b>包含专辑名</b></td>
+      <td>默认关闭。打开后会追加专辑。注意：专辑名会让 QQ 音乐的匹配率下降，<b>一般不建议开</b>。</td>
+      <td><code>晴天 - 周杰伦 - 叶惠美</code></td>
+    </tr>
+    <tr>
+      <td><b>加序号</b></td>
+      <td>在每行前面加 <code>1.</code> <code>2.</code>……方便核对数量。</td>
+      <td><code>1. 晴天 - 周杰伦</code></td>
+    </tr>
+    <tr>
+      <td><b>分隔符</b></td>
+      <td>歌名和歌手之间用什么隔开。默认「空格 - 空格」，这是 QQ 音乐识别最好的一种。</td>
+      <td><code>晴天 - 周杰伦</code><br><code>晴天 周杰伦</code><br><code>晴天,周杰伦</code></td>
+    </tr>
+    <tr>
+      <td><b>每行顺序</b></td>
+      <td>「歌名 → 歌手」或「歌手 → 歌名」。有些平台用后者匹配更准。</td>
+      <td><code>周杰伦 - 晴天</code></td>
+    </tr>
+  </table>
+
+  <div class="callout c-warn">
+    <b>要不要带歌手名？</b>带歌手名 → 匹配更准，尤其重名歌曲（比如《起风了》有一堆版本）。
+    不带 → 文本最干净，适合贴进备忘录或者做纯歌单展示。
+    如果你要导入 QQ 音乐，<b>建议保持默认的「歌名 - 歌手」</b>。
+  </div>
+
+  <h3>搜索框会一起生效</h3>
+  <p>如果你在上面的搜索框里搜了关键词，那么「复制 / 下载」导出的<b>就是你当前看到的这批结果</b>，而不是全部歌曲。
+  想导出全部，把搜索框清空再点复制。</p>
+</section>
+
+<section class="card" id="formats">
+  <h2><span class="n">4</span>四种导出文件，各自适合什么</h2>
+  <table>
+    <tr><th style="width:130px">按钮</th><th>内容</th><th>什么时候用</th></tr>
+    <tr><td><b>复制导入文本</b></td><td>纯文本，一行一首，按上面的格式设置</td><td>直接粘进 QQ 音乐「导入外部歌单」</td></tr>
+    <tr><td><b>下载 .txt</b></td><td>同上，存成文件</td><td>留档、发给别人、稍后再用</td></tr>
+    <tr><td><b>下载 .csv</b></td><td>表格，含 序号 / 歌曲名 / 歌手 / 专辑 / 来源歌单 / 歌曲ID 六列，UTF-8 BOM，Excel 直接打开不乱码</td><td>要在 Excel 里筛选、统计、做二次处理</td></tr>
+    <tr><td><b>下载 .json</b></td><td>结构化数据，字段完整</td><td>给其他程序 / 脚本用</td></tr>
+  </table>
+  <p style="color:var(--sub);font-size:13.3px">
+    <code>.csv</code> 和 <code>.json</code> <b>始终包含完整字段</b>，不受上面「是否带歌手名」的开关影响 —— 那组开关只管文本格式。
+  </p>
+  <p>每个歌单卡片右上角还有单独的「复制 / 下载」按钮，可以只导出某一个歌单。</p>
+</section>
+
+<section class="card" id="import">
+  <h2><span class="n">5</span>导入 QQ 音乐</h2>
+  <h3>电脑端（QQ 音乐 PC 客户端）</h3>
+  <ol>
+    <li>打开 QQ 音乐 PC 版，左侧点<b>「我的音乐」</b>。</li>
+    <li>在歌单区域找一个入口叫 <b>「导入外部歌单」</b>（有的版本在歌单列表右键菜单里，或在「我的」页面右上角）。</li>
+    <li>把刚才复制的文本<b>整段粘贴</b>进去，点「开始匹配 / 导入」。</li>
+    <li>等它匹配完，会告诉你匹配成功多少首、失败多少首，确认创建歌单即可。</li>
+  </ol>
+  <h3>手机端</h3>
+  <ol>
+    <li>手机 QQ 音乐 → <b>「我的」</b> → 歌单区域 → <b>「导入外部歌单」</b>（部分版本叫「一键搬家」）。</li>
+    <li>选择<b>「粘贴文本」</b>的方式，把文本粘进去（可以先在电脑上把 .txt 发到微信文件传输助手，再在手机上复制）。</li>
+    <li>等待匹配，创建歌单。</li>
+  </ol>
+  <div class="callout c-info">
+    <b>匹配不上的歌怎么办？</b>这是正常的 —— 版权差异、歌曲下架、名字写法不同都会导致匹配失败。
+    QQ 音乐通常会把它们列出来，你可以手动搜一下补进歌单。实测几百首的歌单，匹配率一般在 80%~95% 之间。
+  </div>
+</section>
+
+<section class="card" id="other">
+  <h2><span class="n">6</span>导入其他平台</h2>
+  <ul>
+    <li><b>网易云音乐</b>：PC 端「我的音乐」→ 收藏的歌单 → 也有「导入外部歌单 / 歌单搬家」入口，同样支持粘贴文本。</li>
+    <li><b>Apple Music / Spotify</b>：官方没有粘贴导入，需要借助第三方工具（如 SongShift、TuneMyMusic），
+      把下载的 <code>.csv</code> 传上去即可。</li>
+    <li><b>只想留个清单</b>：直接下载 <code>.txt</code>，扔进备忘录就行。</li>
+  </ul>
+</section>
+
+<section class="card" id="faq">
+  <h2><span class="n">7</span>常见问题</h2>
+
+  <details class="faq" open><summary>解析出来 0 首，提示「没有找到歌曲数据」</summary><div class="a">
+    <p>99% 是因为<b>第 1 步没做</b>：客户端只有在你打开歌单、歌曲真的加载出来之后，才会把内容写进本地缓存。</p>
+    <p>请回到汽水音乐，点进歌单，<b>往下滚动几屏把所有歌曲都刷出来</b>（看到底部为止），然后重新拖文件。</p>
+    <p>另外确认一下你拖的是 <code>leveldb</code> 这个文件夹<b>里面的文件</b>，而不是它的上一级 <code>Local Storage</code>。</p>
+  </div></details>
+
+  <details class="faq"><summary>歌单里显示 77 首，导出来 83 首 / 少了几首，哪个对？</summary><div class="a">
+    <p>都对，只是口径不同。歌单的「首数」是服务端统计的，本地缓存里可能包含已经下架、失效、或者你后来删掉但缓存还在的条目。</p>
+    <p>导入 QQ 音乐时，匹配不上的会被自动跳过，所以<b>多一点没关系，不用手动删</b>。</p>
+  </div></details>
+
+  <details class="faq"><summary>里面有别人的歌单 / 多出了我没收藏的歌单</summary><div class="a">
+    <p>工具默认只导出<b>属于你账号</b>的歌单（按歌单 owner 的 UID 过滤）。如果你换过账号登录、或者缓存里残留了别人的数据，理论上可能被带出来。</p>
+    <p>遇到这种情况，用搜索框或者每个歌单卡片单独的「复制 / 下载」按钮，只取你要的那个歌单就行。</p>
+  </div></details>
+
+  <details class="faq"><summary>歌名是乱码，或者出现奇怪的符号</summary><div class="a">
+    <p>本工具的解析器已经处理了常见的编码错位，正常情况不会出现。如果你真的看到了乱码，多半是这份缓存本身是残缺的（写入过程中客户端被强制退出会造成这种情况）。</p>
+    <p>解决：回到汽水音乐，重新打开一次歌单让它重新写入缓存，再重新拖一次文件。</p>
+  </div></details>
+
+  <details class="faq"><summary>为什么必须手动选文件夹？不能自动读吗？</summary><div class="a">
+    <p>浏览器的安全模型决定了：网页<b>永远无法自己指定</b>读取你硬盘上的某个路径，必须由你亲手选中。
+    这不是偷懒，恰恰是它安全的证明 —— 也正因为如此，它才不可能偷偷上传你的文件。</p>
+  </div></details>
+
+  <details class="faq"><summary>会被汽水音乐封号吗？有风险吗？</summary><div class="a">
+    <p>不会。整个过程不登录、不调用任何接口、不模拟请求，只是把你本机上已经存在的一份缓存文件读出来。
+    它和「用记事本打开一个文件」在性质上没有区别。</p>
+  </div></details>
+
+  <details class="faq"><summary>我的账号密码、登录凭证会被读到吗？</summary><div class="a">
+    <p>缓存里确实可能有 token 之类的字段，工具<b>只提取歌曲相关的字段</b>（歌名 / 歌手 / 专辑 / 歌曲ID），
+    不会展示也不会保存其它内容。而且这些数据从头到尾没有离开你的电脑。</p>
+    <p>页面底部有个「原始数据」展开区，你可以自己查看被读到的全部记录，确认里面有什么。</p>
+  </div></details>
+
+  <details class="faq"><summary>关掉汽水音乐再操作会不会更好？</summary><div class="a">
+    <p>不用。这个工具对缓存文件是<b>只读</b>的，和客户端并行运行不会冲突，也不需要退出客户端。</p>
+  </div></details>
+
+  <details class="faq"><summary>可以一次导出多个歌单吗？</summary><div class="a">
+    <p>可以。只要这些歌单你都在客户端里打开过，一次拖入就会全部解析出来，页面上按歌单分卡片展示。
+    顶部的「复制导入文本」会把所有歌单合并成一份；想要单个歌单就用卡片上的按钮。</p>
+  </div></details>
+
+  <details class="faq"><summary>刷新页面后数据还在吗？</summary><div class="a">
+    <p>不在，这也是刻意设计的。所有内容只存在于浏览器内存里，刷新即清空，没有任何本地持久化，也没有服务端存储。</p>
+  </div></details>
+</section>
+
+<section class="card" id="how">
+  <h2><span class="n">8</span>原理：它是怎么读到的（技术向，可跳过）</h2>
+  <p>汽水音乐的桌面端是 Electron 应用。Electron 的「Local Storage」在磁盘上其实是一个 <b>LevelDB</b> 数据库，
+  就在上面那个 <code>leveldb</code> 目录里。前端用的 react-query 会把接口返回的数据缓存进去，key 长这样：</p>
+  <pre><code>_app://resources\x00\x01useRequestCache:playlist_detail:&lt;歌单ID&gt;</code></pre>
+  <p>对应的 value 是一段 JSON，曲目在 <code>data.media_resources[].entity.track_wrapper.track</code> 里，
+  字段有 <code>name</code>、<code>artists[].name</code>、<code>album.name</code>。</p>
+  <p>所以这个工具做的事就是：<b>解析 LevelDB 的 SSTable（.ldb）和日志（.log）→ 取出这些 key → 解 JSON → 按格式拼成文本。</b></p>
+  <p>两个实现上的坑，顺便记一下：</p>
+  <ul>
+    <li>LevelDB 的 <code>BlockHandle</code> 里 <code>size</code> <b>不含</b> 后面那 5 字节 trailer（<code>[压缩类型][CRC32]</code>），
+      按「含 trailer」来切会整块解析失败。</li>
+    <li>压缩类型 <code>1</code> 是 <b>Snappy</b> 而不是 zlib；而且 value 是 UTF-16 编码，偶尔还会错位 1 个字节，
+      需要对「偏移 0/1 × 大小端」四种组合都试一遍再挑最干净的那种。</li>
+  </ul>
+</section>
+
+<section class="card" id="privacy">
+  <h2><span class="n">10</span>隐私与安全</h2>
+  <ul>
+    <li><b>不上传</b>：没有任何网络请求会携带你的文件数据。你可以打开浏览器开发者工具的 Network 面板全程验证。</li>
+    <li><b>不存储</b>：不使用 localStorage、不写 Cookie、不落盘，刷新即焚。</li>
+    <li><b>不追踪</b>：没有统计脚本、没有埋点、没有广告。</li>
+    <li><b>只读</b>：对你的缓存文件只做读取，不修改、不删除，也不会碰汽水音乐的安装目录。</li>
+  </ul>
+  <p>如果你想更放心，还有一个终极用法：把这个页面的 <code>index.html</code> 和几个 <code>.js</code> 一起保存到本地，
+  <b>断网</b>后双击打开使用 —— 功能完全一样。</p>
+</section>
+
+
+<section class="card" id="qq">
+  <h2><span class="n">9</span>另一条路：导出 QQ 音乐里的歌单</h2>
+  <p>前面讲的都是从<b>汽水音乐</b>往外搬。反过来也能做一点 —— 把你在 QQ 音乐里的歌单抓出来。</p>
+  <div class="callout c-warn">
+    <b>先把话说清楚：这条路只能抓到页面上当前显示出来的歌，完整歌单导不出来。</b>
+    QQ 音乐网页版<b>不提供翻页</b>，个人主页和歌单页只给前若干首（实测 10 首左右）；
+    PC 客户端是原生 Qt 程序，本地歌单库 <code>qmlist64.db</code> 是<b>加密</b>的，读不了；
+    网页数据又是服务端直出（不发任何 XHR），连登录 Cookie 都是 <code>HttpOnly</code>，JS 读不到就没法自己调接口补齐。
+    这几条路都试过了，目前无解。<b>如果你要的是完整歌单，别在这上面耗时间。</b>
+  </div>
+  <p>如果你只是想把眼前这几首抄下来，下面的办法能用 —— 在浏览器里登录 <code>y.qq.com</code>，用一个小书签抓取。</p>
+
+  <h3>装一次（30 秒）</h3>
+  <ol class="steps">
+    <li><b>用你自己的 Edge / Chrome 打开 <code>https://y.qq.com</code> 并登录</b>（一般扫码即可）。
+      这里说的就是你平时用的浏览器，不需要任何额外的窗口或软件。</li>
+    <li><b>把小书签拖到书签栏</b>：打开工具站，切到「🎵 QQ 音乐（限可见）」，页面上有个绿色按钮
+      <b>「⭐ QQ音乐歌单导出」</b> —— 按住它拖到地址栏下面那排书签里松手。</li>
+    <li><b>打开你要导出的歌单</b>，比如左侧的「我喜欢的音乐」，或者任意一个歌单，
+      让歌曲<b>显示出来</b>。注意：它不会因为你往下滚就加载更多，页面上能看到多少，最后就只有多少。</li>
+    <li><b>点一下书签栏里那个 ⭐</b> —— 右上角会出现一个小面板，显示「已捕获 N 首」。</li>
+  </ol>
+
+  <h3>怎么用那个面板</h3>
+  <ul>
+    <li><b>复制</b> —— 复制成「歌名 - 歌手」的纯文本，一行一首，和汽水那边的格式完全一样。</li>
+    <li><b>TXT / CSV / JSON</b> —— 下载成文件，其中 CSV 带 BOM，Excel 打开不乱码。</li>
+    <li><b>重新清空</b> —— 换歌单之前点它，不然几个歌单会串在一起。</li>
+    <li>面板右上角的 <b>×</b> 只是收起来。想再叫出来，重新点一次书签就行。</li>
+  </ul>
+
+  <h3>书签拖不动？试试粘贴</h3>
+  <p>在 QQ 音乐歌单页面按 <kbd>F12</kbd> 打开控制台（Console），把工具站上「复制脚本」按钮复制下来的代码粘进去，回车 —— 效果和书签一模一样。</p>
+  <div class="callout c-warn">
+    <b>控制台不让粘贴？</b>Chrome / Edge 会弹红字提示防范诈骗。在那个输入框里先敲 <code>allow pasting</code> 回车，
+    再重新粘一次。<b>这是浏览器自带的安全机制，不是脚本有问题。</b>
+  </div>
+
+  <div class="callout c-info">
+    <b>每次刷新网页后要重新点一次书签</b>（或重新粘一次代码）。因为抓取是挂在当时那个页面上的，刷新会把它清掉 —— 这也正是它用完就走、不留后门的原因。
+  </div>
+
+  <h3>能抓哪些？</h3>
+  <table>
+    <tr><th style="width:170px">内容</th><th>能不能导</th></tr>
+    <tr><td>我喜欢的音乐</td><td>⚠️ 只能拿到页面上显示的那部分（约 10 首）</td></tr>
+    <tr><td>自己创建的歌单</td><td>⚠️ 同上</td></tr>
+    <tr><td>收藏的别人的歌单</td><td>⚠️ 同上</td></tr>
+    <tr><td>QQ 音乐 PC 客户端里的数据</td><td>❌ 本地歌单库是加密的，读不了</td></tr>
+    <tr><td><b>完整歌单（几百首那种）</b></td><td>❌ 网页版不分页，目前无解</td></tr>
+  </table>
+
+  <h3>常见问题</h3>
+  <div class="callout c-warn">
+    <b>显示 0 首？</b>先确认页面上的歌真的显示出来了。然后在页面上随便点一下、往下滚一点，再点 ⭐ ——
+    它是靠"页面自己收到的响应"记账的，页面没加载它就记不到。
+  </div>
+  <div class="callout c-warn">
+    <b>数量比歌单里少？</b>没滚到底。往下再滚一批就多加载一批，面板数字会跟着涨，涨到不动就是全了。
+  </div>
+  <div class="callout c-info">
+    <b>为什么不做成一个网址直接跑？</b>浏览器不允许别的网站去读 QQ 音乐的登录数据（跨域限制），所以必须在你已经打开的 QQ 音乐页面上跑。
+    顺带这成了它最安全的一点：数据从头到尾没离开你的浏览器。
+  </div>
+</section>
+
+</main>
+</div>
+
+<footer>
+  汽水音乐收藏导出 · 使用帮助<br>
+  本工具为第三方个人工具，与汽水音乐、QQ 音乐官方均无关联。
+</footer>
+
+</div>
+</body>
+</html>

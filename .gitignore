@@ -1,0 +1,51 @@
+# ---------- 本地垃圾 / 运行时产物 ----------
+# .edge-debug-profile = 之前调试浏览器留下的 Edge 用户数据目录（23MB）
+.edge-debug-profile/
+# .zion-mcp = Zion CLI/MCP 的登录态与临时文件
+.zion-mcp/
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+# py_compile / 运行产生的字节码缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# ---------- 含个人数据，禁止入库 ----------
+# output/ = 导出的歌单（听歌记录属隐私）
+output/
+# _tools/out/ = 原始 Local Storage 转储 kv.json（3.7MB，可能含登录 token）
+_tools/out/
+_tools/*.keys
+
+# 脚本跑出来的中间产物：含本机路径、歌单名、账号 UID，一律不入库
+_tools/*_out.txt
+_tools/export_result.json
+
+# ---------- 调试产物（小红书抓取实验留下的）----------
+# 这几个脚本里硬编码了本机用户名路径，且只是一次性实验，不入库
+_tools/xhs_*.js
+# 脱敏脚本（一次性工具，跑完就没用了）
+_tools/sanitize_before_public.py
+_tools/_bd_sanitize2.py
+_tools/_bd_fix_guard.py
+# 便携版 GitHub CLI（gh）本体，15MB，不入库
+_tools/gh.zip
+_tools/gh/
+_tools/get_gh.js
+_tools/_*.log
+_tools/_*.txt
+_tools/_alive.txt
+_tools/xhs_*.png
+_tools/xhs_*.txt
+_tools/key.txt
+_tools/phone.txt
+
+# ---------- 编辑器 / 系统 ----------
+.vscode/
+.idea/
+*.swp
+
+# ---------- WorkBuddy 工作记忆（本地用，不必公开）----------
+.workbuddy/
